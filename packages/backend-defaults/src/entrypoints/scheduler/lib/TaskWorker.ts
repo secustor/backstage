@@ -327,26 +327,12 @@ export class TaskWorker {
       nextRun = this.nextRunAtRaw(time);
     } else {
       const dt = Duration.fromISO(settings.cadence).as('seconds');
-      this.logger.debug(
-        `task: ${this.taskId} will next occur around ${DateTime.now().plus({
-          seconds: dt,
-        })}`,
-      );
+      const time = DateTime.now().plus({
+        seconds: dt,
+      });
 
-      if (this.knex.client.config.client.includes('sqlite3')) {
-        nextRun = this.knex.raw(
-          `max(datetime(next_run_start_at, ?), datetime('now'))`,
-          [`+${dt} seconds`],
-        );
-      } else if (this.knex.client.config.client.includes('mysql')) {
-        nextRun = this.knex.raw(
-          `greatest(next_run_start_at + interval ${dt} second, now())`,
-        );
-      } else {
-        nextRun = this.knex.raw(
-          `greatest(next_run_start_at + interval '${dt} seconds', now())`,
-        );
-      }
+      this.logger.debug(`task: ${this.taskId} will next occur around ${time}`);
+      nextRun = this.nextRunAtRaw(time);
     }
 
     const rows = await this.knex<DbTasksRow>(DB_TASKS_TABLE)

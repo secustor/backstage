@@ -484,13 +484,10 @@ describe('TaskWorker', () => {
         new Date(row1.next_run_start_at),
       );
       const now = DateTime.now();
-      expect(
-        rowAfterClaimAndReleaseNextStartAt.diff(row1NextStartAt).as('minutes'),
-      ).toBeCloseTo(62, 1); // ensure that next start at is sooner than initial by one hour, plus the 2 minute delay (set my tryReleaseTask)
-      expect(row1NextStartAt.diff(now).as('minutes')).toBeCloseTo(60, 1); // ensure that next start at is later than now by one hour (2 minute delay doesn't take effect here)
+      expect(row1NextStartAt.diff(now).as('minutes')).toBeCloseTo(60, 1); // ensure that next start at is later than now by one hour
       expect(
         rowAfterClaimAndReleaseNextStartAt.diff(now).as('minutes'),
-      ).toBeCloseTo(122, 1); // includes 2 minute start delay (which is persisted from tryReleaseTask)
+      ).toBeCloseTo(120, 1);
 
       const settings2 = {
         ...settings,
