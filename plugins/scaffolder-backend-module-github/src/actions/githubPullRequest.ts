@@ -25,7 +25,7 @@ import {
   SerializedFile,
   serializeDirectoryContents,
 } from '@backstage/plugin-scaffolder-node';
-import { Octokit } from 'octokit';
+import type { Octokit as OctokitType } from '@octokit/rest';
 import { CustomErrorBase, InputError } from '@backstage/errors';
 import { createPullRequest } from 'octokit-plugin-create-pull-request';
 import { getOctokitOptions } from '../util';
@@ -36,6 +36,8 @@ import {
 } from '@backstage/backend-plugin-api';
 import { Config } from '@backstage/config';
 import { JsonValue } from '@backstage/types';
+
+const { Octokit } = require('@octokit/rest') as typeof import('@octokit/rest');
 
 export type Encoding = 'utf-8' | 'base64';
 
@@ -90,7 +92,7 @@ export interface CreateGithubPullRequestActionOptions {
     repo: string;
     token?: string;
   }) => Promise<
-    Octokit & {
+    OctokitType & {
       createPullRequest(options: createPullRequest.Options): Promise<{
         data: {
           html_url: string;
@@ -479,7 +481,7 @@ export const createPublishGithubPullRequestAction = (
     pr: GithubPullRequest,
     reviewers: string[] | undefined,
     teamReviewers: string[] | undefined,
-    client: Octokit,
+    client: OctokitType,
     logger: LoggerService,
     checkpoint: <T extends JsonValue | void>(opts: {
       key: string;

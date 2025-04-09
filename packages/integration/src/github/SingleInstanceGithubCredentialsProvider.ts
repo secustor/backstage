@@ -16,14 +16,20 @@
 
 import parseGitUrl from 'git-url-parse';
 import { GithubAppConfig, GithubIntegrationConfig } from './config';
-import { createAppAuth } from '@octokit/auth-app';
-import { Octokit, RestEndpointMethodTypes } from '@octokit/rest';
+import type {
+  Octokit as OctokitType,
+  RestEndpointMethodTypes,
+} from '@octokit/rest';
 import { DateTime } from 'luxon';
 import {
   GithubCredentials,
   GithubCredentialsProvider,
   GithubCredentialType,
 } from './types';
+
+const { createAppAuth } =
+  require('@octokit/auth-app') as typeof import('@octokit/auth-app');
+const { Octokit } = require('@octokit/rest') as typeof import('@octokit/rest');
 
 type InstallationData = {
   installationId: number;
@@ -95,7 +101,7 @@ const HEADERS = {
  * GithubAppManager issues and caches tokens for a specific GitHub App.
  */
 class GithubAppManager {
-  private readonly appClient: Octokit;
+  private readonly appClient: OctokitType;
   private readonly baseUrl?: string;
   private readonly baseAuthConfig: { appId: number; privateKey: string };
   private readonly cache = new Cache();
@@ -152,7 +158,7 @@ class GithubAppManager {
         );
         // The return type of the paginate method is incorrect.
         const repositories: RestEndpointMethodTypes['apps']['listReposAccessibleToInstallation']['response']['data']['repositories'] =
-          repos.repositories ?? repos;
+          repos;
 
         repositoryNames = repositories.map(repository => repository.name);
       }

@@ -25,10 +25,12 @@ import {
   DefaultEventsService,
   EventParams,
 } from '@backstage/plugin-events-node';
-import { graphql } from '@octokit/graphql';
 import { createGraphqlClient } from '../lib/github';
 import { withLocations } from '../lib/withLocations';
 import { GithubOrgEntityProvider } from './GithubOrgEntityProvider';
+
+const { graphql } =
+  require('@octokit/graphql') as typeof import('@octokit/graphql');
 
 jest.mock('@octokit/graphql');
 jest.mock('../lib/github', () => ({

@@ -20,10 +20,11 @@ import {
 } from '@backstage/integration';
 import parseGitUrl from 'git-url-parse';
 import { ScmAuthApi } from '@backstage/integration-react';
-import { Octokit } from '@octokit/rest';
 import { getBranchName, getCatalogFilename } from '../components/helpers';
 import { ConfigApi } from '@backstage/core-plugin-api';
 import { Base64 } from 'js-base64';
+
+const { Octokit } = require('@octokit/rest') as typeof import('@octokit/rest');
 
 export interface GitHubOptions {
   owner: string;

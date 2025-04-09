@@ -22,13 +22,15 @@ import {
   DefaultEventsService,
   EventsService,
 } from '@backstage/plugin-events-node';
-import { graphql } from '@octokit/graphql';
 import {
   GithubMultiOrgEntityProvider,
   withLocations,
 } from './GithubMultiOrgEntityProvider';
 import { LoggerService } from '@backstage/backend-plugin-api';
 import { mockServices } from '@backstage/backend-test-utils';
+
+const { graphql } =
+  require('@octokit/graphql') as typeof import('@octokit/graphql');
 
 jest.mock('@octokit/graphql');
 

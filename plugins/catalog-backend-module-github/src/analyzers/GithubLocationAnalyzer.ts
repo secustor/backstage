@@ -21,7 +21,6 @@ import {
   ScmIntegrationRegistry,
   ScmIntegrations,
 } from '@backstage/integration';
-import { Octokit } from '@octokit/rest';
 import { isEmpty, trimEnd } from 'lodash';
 import parseGitUrl from 'git-url-parse';
 import {
@@ -35,6 +34,8 @@ import {
 import { Config } from '@backstage/config';
 import { AuthService, DiscoveryService } from '@backstage/backend-plugin-api';
 import { extname } from 'path';
+
+const { Octokit } = require('@octokit/rest') as typeof import('@octokit/rest');
 
 /** @public */
 export type GithubLocationAnalyzerOptions = {

@@ -35,7 +35,6 @@ import {
   LocationSpec,
   processingResult,
 } from '@backstage/plugin-catalog-node';
-import { graphql } from '@octokit/graphql';
 import {
   assignGroupsToUsers,
   buildOrgHierarchy,
@@ -50,6 +49,9 @@ import {
 } from '../lib';
 import { areGroupEntities, areUserEntities } from '../lib/guards';
 import { LoggerService } from '@backstage/backend-plugin-api';
+
+const { graphql } =
+  require('@octokit/graphql') as typeof import('@octokit/graphql');
 
 /**
  * Extracts teams and users out of a multiple GitHub orgs namespaced per org.

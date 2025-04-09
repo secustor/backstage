@@ -20,9 +20,11 @@ import {
   ScmIntegrations,
 } from '@backstage/integration';
 import { LocationSpec } from '@backstage/plugin-catalog-node';
-import { graphql } from '@octokit/graphql';
 import { GithubOrgReaderProcessor } from './GithubOrgReaderProcessor';
 import { mockServices } from '@backstage/backend-test-utils';
+
+const { graphql } =
+  require('@octokit/graphql') as typeof import('@octokit/graphql');
 
 jest.mock('@octokit/graphql');
 

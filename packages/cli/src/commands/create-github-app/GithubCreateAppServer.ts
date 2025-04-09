@@ -16,8 +16,10 @@
 
 import crypto from 'crypto';
 import openBrowser from 'react-dev-utils/openBrowser';
-import { request } from '@octokit/request';
 import express, { Express, Request, Response } from 'express';
+
+const { request } =
+  require('@octokit/request') as typeof import('@octokit/request');
 
 const FORM_PAGE = `
 <html>

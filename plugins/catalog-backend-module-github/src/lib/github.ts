@@ -16,7 +16,6 @@
 
 import { Entity } from '@backstage/catalog-model';
 import { GithubCredentialType } from '@backstage/integration';
-import { graphql } from '@octokit/graphql';
 import {
   defaultOrganizationTeamTransformer,
   defaultUserTransformer,
@@ -27,10 +26,13 @@ import {
 import { withLocations } from './withLocations';
 
 import { DeferredEntity } from '@backstage/plugin-catalog-node';
-import { Octokit } from '@octokit/core';
 import { LoggerService } from '@backstage/backend-plugin-api';
 import { throttling } from '@octokit/plugin-throttling';
 // Graphql types
+
+const { Octokit } = require('@octokit/core') as typeof import('@octokit/core');
+const { graphql } =
+  require('@octokit/graphql') as typeof import('@octokit/graphql');
 
 export type QueryResponse = {
   organization?: OrganizationResponse;

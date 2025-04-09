@@ -31,7 +31,6 @@ import {
 
 import { LocationSpec } from '@backstage/plugin-catalog-common';
 
-import { graphql } from '@octokit/graphql';
 import * as uuid from 'uuid';
 import {
   GithubEntityProviderConfig,
@@ -70,6 +69,9 @@ import {
   SchedulerService,
   SchedulerServiceTaskRunner,
 } from '@backstage/backend-plugin-api';
+
+const { graphql } =
+  require('@octokit/graphql') as typeof import('@octokit/graphql');
 
 const EVENT_TOPICS = ['github.push', 'github.repository'];
 

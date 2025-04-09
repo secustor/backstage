@@ -38,7 +38,6 @@ import {
   EntityProviderConnection,
 } from '@backstage/plugin-catalog-node';
 import { EventParams, EventsService } from '@backstage/plugin-events-node';
-import { graphql } from '@octokit/graphql';
 import {
   InstallationCreatedEvent,
   InstallationEvent,
@@ -81,6 +80,9 @@ import {
   LoggerService,
   SchedulerServiceTaskRunner,
 } from '@backstage/backend-plugin-api';
+
+const { graphql } =
+  require('@octokit/graphql') as typeof import('@octokit/graphql');
 
 const EVENT_TOPICS = [
   'github.installation',

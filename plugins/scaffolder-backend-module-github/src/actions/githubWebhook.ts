@@ -22,11 +22,13 @@ import {
   createTemplateAction,
   parseRepoUrl,
 } from '@backstage/plugin-scaffolder-node';
-import { emitterEventNames } from '@octokit/webhooks';
 import { assertError, InputError } from '@backstage/errors';
-import { Octokit } from 'octokit';
+import { Octokit } from '@octokit/rest';
 import { getOctokitOptions } from '../util';
 import { examples } from './githubWebhook.examples';
+
+const { emitterEventNames } =
+  require('@octokit/webhooks') as typeof import('@octokit/webhooks');
 
 /**
  * Creates new action that creates a webhook for a repository on GitHub.

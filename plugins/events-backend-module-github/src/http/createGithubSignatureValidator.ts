@@ -20,7 +20,8 @@ import {
   RequestValidationContext,
   RequestValidator,
 } from '@backstage/plugin-events-node';
-import { verify } from '@octokit/webhooks-methods';
+
+const { verify } = require('@octokit/webhooks-methods');
 
 /**
  * Validates that the request received is the expected GitHub request

@@ -23,9 +23,10 @@ import {
   parseRepoUrl,
 } from '@backstage/plugin-scaffolder-node';
 import { assertError, InputError } from '@backstage/errors';
-import { Octokit } from 'octokit';
 import { getOctokitOptions } from '../util';
 import { examples } from './githubIssuesLabel.examples';
+
+const { Octokit } = require('@octokit/rest') as typeof import('@octokit/rest');
 
 /**
  * Adds labels to a pull request or issue on GitHub

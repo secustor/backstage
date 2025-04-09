@@ -58,7 +58,6 @@ import { ScmIntegrations } from '@backstage/integration';
 import { ScmAuthApi } from '@backstage/integration-react';
 import { catalogApiMock } from '@backstage/plugin-catalog-react/testUtils';
 import { MockFetchApi, registerMswTestHooks } from '@backstage/test-utils';
-import { Octokit } from '@octokit/rest';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import {
@@ -67,6 +66,8 @@ import {
   createAzurePullRequest,
 } from './AzureRepoApiClient';
 import { CatalogImportClient } from './CatalogImportClient';
+
+const { Octokit } = require('@octokit/rest') as typeof import('@octokit/rest');
 
 describe('CatalogImportClient', () => {
   const server = setupServer();

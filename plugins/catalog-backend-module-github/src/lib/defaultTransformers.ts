@@ -15,12 +15,14 @@
  */
 
 import { Entity, GroupEntity, UserEntity } from '@backstage/catalog-model';
-import { graphql } from '@octokit/graphql';
 import {
   ANNOTATION_GITHUB_TEAM_SLUG,
   ANNOTATION_GITHUB_USER_LOGIN,
 } from './annotation';
 import { GithubTeam, GithubUser } from './github';
+
+const { graphql } =
+  require('@octokit/graphql') as typeof import('@octokit/graphql');
 
 /**
  * Context passed to Transformers

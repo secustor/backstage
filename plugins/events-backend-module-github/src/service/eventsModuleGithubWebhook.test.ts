@@ -20,8 +20,9 @@ import {
   HttpPostIngressOptions,
   RequestDetails,
 } from '@backstage/plugin-events-node';
-import { sign } from '@octokit/webhooks-methods';
 import { eventsModuleGithubWebhook } from './eventsModuleGithubWebhook';
+
+const { sign } = require('@octokit/webhooks-methods');
 
 describe('eventsModuleGithubWebhook', () => {
   const secret = 'valid-secret';

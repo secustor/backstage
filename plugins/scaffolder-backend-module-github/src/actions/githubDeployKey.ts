@@ -21,9 +21,10 @@ import {
 } from '@backstage/plugin-scaffolder-node';
 import { ScmIntegrationRegistry } from '@backstage/integration';
 import { getOctokitOptions } from '../util';
-import { Octokit } from 'octokit';
 import Sodium from 'libsodium-wrappers';
 import { examples } from './githubDeployKey.examples';
+
+const { Octokit } = require('@octokit/rest') as typeof import('@octokit/rest');
 
 /**
  * Creates an `github:deployKey:create` Scaffolder action that creates a Deploy Key

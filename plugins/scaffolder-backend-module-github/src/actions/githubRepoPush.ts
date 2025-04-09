@@ -20,7 +20,6 @@ import {
   GithubCredentialsProvider,
   ScmIntegrationRegistry,
 } from '@backstage/integration';
-import { Octokit } from 'octokit';
 import {
   createTemplateAction,
   parseRepoUrl,
@@ -30,6 +29,8 @@ import { getOctokitOptions } from '../util';
 import * as inputProps from './inputProperties';
 import * as outputProps from './outputProperties';
 import { examples } from './githubRepoPush.examples';
+
+const { Octokit } = require('@octokit/rest') as typeof import('@octokit/rest');
 
 /**
  * Creates a new action that initializes a git repository of the content in the workspace

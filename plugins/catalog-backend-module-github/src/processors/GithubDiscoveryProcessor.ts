@@ -27,9 +27,11 @@ import {
   LocationSpec,
   processingResult,
 } from '@backstage/plugin-catalog-node';
-import { graphql } from '@octokit/graphql';
 import { getOrganizationRepositories } from '../lib';
 import { LoggerService } from '@backstage/backend-plugin-api';
+
+const { graphql } =
+  require('@octokit/graphql') as typeof import('@octokit/graphql');
 
 /**
  * Extracts repositories out of a GitHub org.

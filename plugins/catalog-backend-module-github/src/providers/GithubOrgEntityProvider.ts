@@ -32,7 +32,6 @@ import {
   EntityProviderConnection,
 } from '@backstage/plugin-catalog-node';
 import { EventParams, EventsService } from '@backstage/plugin-events-node';
-import { graphql } from '@octokit/graphql';
 import {
   MembershipEvent,
   OrganizationEvent,
@@ -64,6 +63,9 @@ import { areGroupEntities, areUserEntities } from '../lib/guards';
 import { assignGroupsToUsers, buildOrgHierarchy } from '../lib/org';
 import { parseGithubOrgUrl } from '../lib/util';
 import { withLocations } from '../lib/withLocations';
+
+const { graphql } =
+  require('@octokit/graphql') as typeof import('@octokit/graphql');
 
 const EVENT_TOPICS = [
   'github.membership',

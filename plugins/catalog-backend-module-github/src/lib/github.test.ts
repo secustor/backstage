@@ -19,7 +19,6 @@ import {
   registerMswTestHooks,
 } from '@backstage/backend-test-utils';
 import { GroupEntity, UserEntity } from '@backstage/catalog-model';
-import { graphql as graphqlOctokit } from '@octokit/graphql';
 import { graphql as graphqlMsw, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { TeamTransformer, UserTransformer } from './defaultTransformers';
@@ -37,8 +36,12 @@ import {
   createReplaceEntitiesOperation,
   createGraphqlClient,
 } from './github';
-import { Octokit } from '@octokit/core';
-import { throttling } from '@octokit/plugin-throttling';
+
+const { Octokit } = require('@octokit/core') as typeof import('@octokit/core');
+const { throttling } =
+  require('@octokit/plugin-throttling') as typeof import('@octokit/plugin-throttling');
+const octokit =
+  require('@octokit/graphql') as typeof import('@octokit/graphql');
 
 jest.mock('@octokit/core', () => ({
   ...jest.requireActual('@octokit/core'),
@@ -51,7 +54,7 @@ describe('github', () => {
   const server = setupServer();
   registerMswTestHooks(server);
 
-  const graphql = graphqlOctokit.defaults({});
+  const graphql = octokit.graphql.defaults({});
 
   describe('getOrganizationUsers using defaultUserMapper', () => {
     it('reads members', async () => {

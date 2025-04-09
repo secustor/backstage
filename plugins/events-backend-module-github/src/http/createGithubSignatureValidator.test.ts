@@ -20,8 +20,9 @@ import {
   RequestRejectionDetails,
   RequestValidationContext,
 } from '@backstage/plugin-events-node';
-import { sign } from '@octokit/webhooks-methods';
 import { createGithubSignatureValidator } from './createGithubSignatureValidator';
+
+const { sign } = require('@octokit/webhooks-methods');
 
 class TestContext implements RequestValidationContext {
   #details?: Partial<RequestRejectionDetails>;
