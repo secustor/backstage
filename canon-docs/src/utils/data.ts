@@ -77,6 +77,16 @@ export const components: Page[] = [
     status: 'alpha',
   },
   {
+    title: 'ButtonIcon',
+    slug: 'button-icon',
+    status: 'alpha',
+  },
+  {
+    title: 'ButtonLink',
+    slug: 'button-link',
+    status: 'alpha',
+  },
+  {
     title: 'Checkbox',
     slug: 'checkbox',
     status: 'alpha',
@@ -97,11 +107,6 @@ export const components: Page[] = [
     status: 'alpha',
   },
   {
-    title: 'IconButton',
-    slug: 'icon-button',
-    status: 'alpha',
-  },
-  {
     title: 'Link',
     slug: 'link',
     status: 'alpha',
@@ -109,6 +114,16 @@ export const components: Page[] = [
   {
     title: 'Menu',
     slug: 'menu',
+    status: 'alpha',
+  },
+  {
+    title: 'RadioGroup',
+    slug: 'radio-group',
+    status: 'alpha',
+  },
+  {
+    title: 'SearchField',
+    slug: 'search-field',
     status: 'alpha',
   },
   {
