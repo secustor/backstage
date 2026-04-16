@@ -14,95 +14,29 @@
  * limitations under the License.
  */
 
-import fs from 'fs-extra';
-import { join } from 'node:path';
 import chalk from 'chalk';
-import { findOwnPaths, targetPaths } from '@backstage/cli-common';
 import { runner } from '../../../../lib/runner';
-import { YAML_SCHEMA_PATH } from '../../../../lib/openapi/constants';
-import { exec } from '../../../../lib/exec';
 import { getPathToOpenApiSpec } from '../../../../lib/openapi/helpers';
+import { exec } from '../../../../lib/exec';
 
-async function test(
-  directoryPath: string,
-  { port }: { port: number },
-  options?: { update?: boolean },
-) {
-  let openapiPath = join(directoryPath, YAML_SCHEMA_PATH);
+async function test(directoryPath: string) {
   try {
-    openapiPath = await getPathToOpenApiSpec(directoryPath);
+    await getPathToOpenApiSpec(directoryPath);
   } catch {
-    // OpenAPI schema doesn't exist.
+    // OpenAPI schema doesn't exist — skip this package.
     return;
   }
-  const opticConfigFilePath = join(directoryPath, 'optic.yml');
-  if (!(await fs.pathExists(opticConfigFilePath))) {
-    return;
-  }
-  let opticLocation = '';
-  try {
-    opticLocation = (
-      await exec(`yarn bin optic`, [], {
-        /* eslint-disable-next-line no-restricted-syntax */
-        cwd: findOwnPaths(__dirname).rootDir,
-      })
-    ).stdout as string;
-  } catch (err) {
-    throw new Error(
-      `Failed to find an Optic CLI installation, ensure that you have @useoptic/optic installed in the root of your repo. If not, run yarn add @useoptic/optic from the root of your repo.`,
-    );
-  }
-  try {
-    await exec(
-      `${opticLocation.trim()} capture`,
-      [
-        YAML_SCHEMA_PATH,
-        '--server-override',
-        `http://localhost:${port}`,
-        options?.update ? '--update' : '',
-      ],
-      {
-        cwd: directoryPath,
-        env: {
-          ...process.env,
-          PORT: `${port}`,
-        },
-      },
-    );
-  } catch (err) {
-    // Optic outputs the actual results to stdout, but that will not be added to the message by default.
-    err.message = err.stderr + err.stdout;
-    err.message = (err.message as string)
-      .split('\n')
-      .map(e => e.replace(/.{1} Sending requests to server/, ''))
-      // Remove any lines that are emitted during processing and only show output.
-      .filter(e => !e.includes('PASS'))
-      .filter(e => e.trim())
-      .join('\n');
-    throw err;
-  }
-  if (
-    (await fs.pathExists(
-      targetPaths.resolveRoot('node_modules/.bin/prettier'),
-    )) &&
-    options?.update
-  ) {
-    await exec(`yarn prettier`, ['--write', openapiPath]);
-  }
+
+  await exec('yarn', ['backstage-cli', 'package', 'test', '--no-watch'], {
+    cwd: directoryPath,
+    env: process.env,
+  });
 }
 
-export async function bulkCommand(
-  paths: string[] = [],
-  options: { update?: boolean },
-): Promise<void> {
-  const resultsList = await runner(
-    paths,
-    (dir, runnerOptions) => test(dir, runnerOptions!, options),
-    {
-      concurrencyLimit: 1,
-      startingPort: 9_000,
-    },
-  );
+export async function bulkCommand(paths: string[] = []): Promise<void> {
+  const resultsList = await runner(paths, dir => test(dir), {
+    concurrencyLimit: 1,
+  });
 
   let failed = false;
   for (const { relativeDir, resultText } of resultsList) {

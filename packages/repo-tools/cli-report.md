@@ -226,7 +226,7 @@ Commands:
   fuzz [options]
   help [command]
   lint [options] [paths...]
-  test [options] [paths...]
+  test [paths...]
   verify [paths...]
 ```
 
@@ -266,7 +266,6 @@ Options:
 Usage: backstage-repo-tools repo schema openapi test [options] [paths...]
 
 Options:
-  --update
   -h, --help
 ```
 

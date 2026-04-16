@@ -33,7 +33,7 @@ export async function runner(
   let port =
     options?.startingPort &&
     (await portFinder.getPortPromise({
-      // Prevent collisions with optic which runs 8000->8999
+      // Prevent collisions with other tooling in the 8000->8999 range
       port: options.startingPort,
       stopPort: options.startingPort + 1_000,
     }));
@@ -47,7 +47,7 @@ export async function runner(
             port =
               options?.startingPort &&
               (await portFinder.getPortPromise({
-                // Prevent collisions with optic which runs 8000->8999
+                // Prevent collisions with other tooling in the 8000->8999 range
                 port: port + 1,
                 stopPort: options.startingPort + 1_000,
               }));

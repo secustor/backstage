@@ -123,7 +123,6 @@ function registerRepoCommand(program: Command) {
   openApiCommand
     .command('test [paths...]')
     .description('Test OpenAPI schemas against written tests')
-    .option('--update', 'Update the spec on failure.')
     .action(lazy(() => import('./repo/schema/openapi/test'), 'bulkCommand'));
 
   openApiCommand

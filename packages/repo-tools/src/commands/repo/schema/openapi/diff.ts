@@ -18,15 +18,13 @@ import { OptionValues } from 'commander';
 import { exec } from '../../../../lib/exec';
 import { targetPaths } from '@backstage/cli-common';
 import {
-  CiRunDetails,
-  generateCompareSummaryMarkdown,
+  DiffSummary,
+  generateDiffSummaryMarkdown,
 } from '../../../../lib/openapi/optic/helpers';
 import { YAML_SCHEMA_PATH } from '../../../../lib/openapi/constants';
 
-function cleanUpApiName(e: { apiName: string }) {
-  e.apiName = e.apiName
-    .replace(targetPaths.dir, '')
-    .replace(YAML_SCHEMA_PATH, '');
+function cleanUpApiName(name: string): string {
+  return name.replace(targetPaths.dir, '').replace(YAML_SCHEMA_PATH, '');
 }
 
 export async function command(opts: OptionValues) {
@@ -57,51 +55,52 @@ export async function command(opts: OptionValues) {
   const checkablePackages = packages.filter(e => e.packageJson.scripts?.diff);
 
   try {
-    const outputs = {
+    const outputs: DiffSummary = {
       completed: [],
       failed: [],
-      noop: [],
       warning: [],
-      severity: 0,
-    } as CiRunDetails;
+    };
+
     for (const pkg of checkablePackages) {
       const sinceCommands = since ? ['--since', since] : [];
-      const { stdout } = await exec(
-        'yarn',
-        ['diff', '--ignore', '--json', ...sinceCommands],
-        {
-          cwd: pkg.dir,
-        },
-      );
-      const result = JSON.parse(stdout.toString());
-      outputs.completed.push(...(result.completed ?? []));
-      outputs.failed.push(...(result.failed ?? []));
-      outputs.noop.push(...(result.noop ?? []));
+      try {
+        const { stdout } = await exec(
+          'yarn',
+          ['diff', '--ignore', ...sinceCommands],
+          { cwd: pkg.dir },
+        );
+        outputs.completed.push({
+          apiName: cleanUpApiName(`${pkg.dir}/`),
+          breaking: false,
+          output: stdout.toString().trim(),
+        });
+      } catch (err: any) {
+        const errOutput = (err.stdout ?? err.message) as string;
+        outputs.completed.push({
+          apiName: cleanUpApiName(`${pkg.dir}/`),
+          breaking: true,
+          output: errOutput.toString().trim(),
+        });
+      }
     }
 
     for (const pkg of packages.filter(e => !e.packageJson.scripts?.diff)) {
-      outputs.warning?.push({
-        apiName: `${pkg.dir}/`,
+      outputs.warning.push({
+        apiName: cleanUpApiName(`${pkg.dir}/`),
         warning: 'No diff script found in package.json',
       });
     }
 
-    outputs.completed.forEach(cleanUpApiName);
-    outputs.failed.forEach(cleanUpApiName);
-    outputs.noop.forEach(cleanUpApiName);
-    outputs.warning?.forEach(cleanUpApiName);
-
     const { stdout: currentSha } = await exec('git', ['rev-parse', 'HEAD']);
     console.log(
-      generateCompareSummaryMarkdown(
+      generateDiffSummaryMarkdown(
         { sha: currentSha.toString().trim() },
         outputs,
-        { verbose: true },
       ),
     );
 
-    const failed = outputs.failed.length > 0;
-    if (failed) {
+    const hasBreaking = outputs.completed.some(r => r.breaking);
+    if (hasBreaking) {
       throw new Error('Some checks failed');
     }
   } catch (err) {

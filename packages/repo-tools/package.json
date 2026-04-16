@@ -25,6 +25,7 @@
   "files": [
     "bin",
     "dist/**/*.js",
+    "scripts",
     "templates",
     "openapitools.json"
   ],
@@ -33,7 +34,8 @@
     "clean": "backstage-cli package clean",
     "lint": "backstage-cli package lint",
     "start": "nodemon --",
-    "test": "backstage-cli package test"
+    "test": "backstage-cli package test",
+    "postinstall": "node scripts/postinstall-oasdiff.js"
   },
   "nodemonConfig": {
     "exec": "bin/backstage-repo-tools",
@@ -62,7 +64,6 @@
     "@stoplight/spectral-rulesets": "^1.18.0",
     "@stoplight/spectral-runtime": "^1.1.2",
     "@stoplight/types": "^14.0.0",
-    "@useoptic/openapi-utilities": "^0.55.0",
     "chalk": "^4.0.0",
     "chokidar": "^3.5.3",
     "codeowners-utils": "^1.0.2",
@@ -93,13 +94,13 @@
     "@types/is-glob": "^4.0.2",
     "@types/node": "^22.13.14",
     "@types/prettier": "^2.0.0",
+    "node-fetch": "^3.3.2",
     "typedoc": "^0.28.0"
   },
   "peerDependencies": {
     "@microsoft/api-extractor-model": "*",
     "@microsoft/tsdoc": "*",
     "@microsoft/tsdoc-config": "*",
-    "@useoptic/optic": "^1.0.0",
     "prettier": "^2.8.1 || ^3.8.1",
     "typedoc": "^0.28.0",
     "typescript": "> 3.0.0"

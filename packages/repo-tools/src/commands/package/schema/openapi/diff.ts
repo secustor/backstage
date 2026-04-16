@@ -16,21 +16,12 @@
 import chalk from 'chalk';
 import { exec } from '../../../../lib/exec';
 import { getPathToCurrentOpenApiSpec } from '../../../../lib/openapi/helpers';
-import { targetPaths } from '@backstage/cli-common';
 import { OptionValues } from 'commander';
-import { env } from 'node:process';
-import { readFile, rm } from 'node:fs/promises';
-import { resolve } from 'node:path';
-
-const reduceOpticOutput = (output: string) => {
-  return output
-    .split('\n')
-    .filter(e => !e.startsWith('Rerun') && e.trim())
-    .join('\n');
-};
+import { resolveOasdiffBinary } from '../../../../lib/oasdiff/binary';
 
 async function check(opts: OptionValues) {
   const resolvedOpenapiPath = await getPathToCurrentOpenApiSpec();
+  const oasdiff = resolveOasdiffBinary();
 
   let baseRef = opts.since;
   if (!baseRef) {
@@ -40,42 +31,32 @@ async function check(opts: OptionValues) {
     baseRef = branch.toString().trim();
   }
 
+  const format = opts.json ? 'json' : 'text';
+  const gitSpec = `${baseRef}:${resolvedOpenapiPath}`;
+
   let failed = false;
   let output = '';
   try {
-    const { stdout } = await exec(
-      'yarn optic diff',
-      [
-        resolvedOpenapiPath,
-        '--check',
-        opts.json ? '--json' : '',
-        '--base',
-        baseRef,
-      ],
-      {
-        cwd: targetPaths.rootDir,
-        env: { CI: opts.json ? '1' : undefined, ...env },
-      },
-    );
+    const { stdout } = await exec(oasdiff, [
+      'breaking',
+      gitSpec,
+      resolvedOpenapiPath,
+      '-f',
+      format,
+    ]);
     output = stdout.toString();
-  } catch (err) {
-    output = err.stdout;
+  } catch (err: any) {
+    output = (err.stdout ?? err.message) as string;
     failed = true;
   }
 
   if (opts.json) {
-    const file = (
-      await readFile(resolve(targetPaths.rootDir, 'ci-run-details.json'))
-    ).toString();
-    const results = JSON.parse(file);
-    console.log(file);
-    if (!opts.ignore && results.failed) {
+    console.log(output);
+    if (!opts.ignore && failed) {
       throw new Error('Some checks failed');
     }
-
-    await rm(resolve(targetPaths.rootDir, 'ci-run-details.json'));
   } else {
-    console.log(reduceOpticOutput(output));
+    console.log(output);
     if (!opts.ignore && failed) {
       throw new Error('Some checks failed');
     }
@@ -86,7 +67,7 @@ export async function command(opts: OptionValues) {
   try {
     await check(opts);
     if (!opts.json) console.log(chalk.green(`All checks passed.`));
-  } catch (err) {
+  } catch (err: any) {
     if (!opts.json) console.log(chalk.red(err.message));
     process.exit(1);
   }

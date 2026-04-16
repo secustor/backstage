@@ -180,6 +180,9 @@ knip.json
 .hypothesis/
 .cassettes/
 
+# Downloaded oasdiff binary
+packages/repo-tools/bin/oasdiff/
+
 # Typedocs temporary files
 type-docs
 docs.json
